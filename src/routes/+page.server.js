@@ -1,14 +1,17 @@
-import {BASE_URL} from '$env/static/private';
+import { BASE_URL, API_KEY } from '$env/static/private';
+import { Gemini } from '$lib/utils';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ fetch }) {
-  const response = await fetch(BASE_URL + '/hello', {
-    method: 'post'
+
+  // return {};
+  const gemini = Gemini(BASE_URL, API_KEY)('gemini-1.5-flash');
+  const response = await gemini.generateContent({
+    "contents": [{
+      "parts": [{ "text": "Привет" }, { "text": "меня зовут Павел!" }]
+    }]
   });
 
-  const data = await response.text();
-  return {
-    url: BASE_URL,
-    data
-  };
+
+  return response;
 }

@@ -4,13 +4,14 @@
 
   let {data} = $props();
   const messages = $state([
-    'Hello',
-    'World from some random file World from some random file World from some random file',
-    'World from some random file World from some random file World from some random file World from some random file World from some random file World from some random file',
-    'World from some random file World from some random file World from some random file',
-    'SvelteKit',
-    'with',
-    'Vite'
+    {
+      role: 'user',
+      parts: [{text: 'Привет!'}]
+    },
+    {
+      role: 'model',
+      parts: [{text: 'Привет!'}]
+    }
   ]);
 
   let value = $state('');
@@ -24,12 +25,55 @@
   }
 
 </script>
-<pre>{JSON.stringify(data, null, 2)}</pre>
 
+<!-- <div class="console">
+  <h1>Data</h1>
+  {JSON.stringify({
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "Привет, Павел! 👋  Рада познакомиться. 😊  Чем могу тебе помочь? 😊\n"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0,
+        "safetyRatings": [
+          {
+            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_HATE_SPEECH",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_HARASSMENT",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+            "probability": "NEGLIGIBLE"
+          }
+        ]
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 5,
+      "candidatesTokenCount": 19,
+      "totalTokenCount": 24
+    },
+    "modelVersion": "gemini-1.5-flash-001"
+  }, null, 2)}
+</div> -->
 <main>
+  <header>Header</header>
   <div class="messages">
-    {#each messages as message}
-      <div>{message}</div>
+    {#each messages as {role, parts}}
+      <div class={role}>{parts.map(({text}) => text).join('')}</div>
     {/each}
   </div>
 
@@ -57,43 +101,67 @@
 
 
 <style>
+  .console {
+    position: absolute;
+    box-sizing: border-box;
+    z-index: 100;
+    top: 5vw;
+    left: 5vw;
+    width: 90vw;
+    padding: 1em;
+    height: 90vh;
+    overflow: auto;
+    font-size: .8em;
+    box-shadow: 0 0 50px rgba(0, 0, 0, .5);
+    background-color: #fff;
+    white-space: pre-wrap;
+    font-family: monospace;
+  }
   main {
     max-width: 500px;
     margin: 0 auto;
-    border: 1px solid #ccc;
-    height: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: .5em 1em;
+    border-bottom: 1px solid #ccc;
   }
 
   .messages {
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
     height: 100%;
     overflow: auto;
     padding: 1rem;
-    background-color: #eee;
+    /* background-color: #eee; */
     gap: 1rem;
   }
-  .messages > div {
+
+  .user, .model {
     font-size: .9rem;
     line-height: 1.6em;
     padding: .4em .7em;
     border-radius: 0.5em;
   }
   
-  .messages div:nth-child(even) {
-    align-self: self-start;
-    margin-right: 20%;
-    border-bottom-left-radius: 0;
-    background-color: #e2e2e2;
-  }
-  
-  .messages div:nth-child(odd) {
+  .user {
     align-self: self-end;
     margin-left: 20%;
     border-bottom-right-radius: 0;
     background-color: #d1dffc;
   }
 
+  .model {
+    align-self: self-start;
+    margin-right: 20%;
+    border-bottom-left-radius: 0;
+    background-color: #e2e2e2;
+  }
 
   form {
     width: 100%;
