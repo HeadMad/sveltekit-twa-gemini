@@ -1,20 +1,20 @@
 <script>
-  import { Loader } from "$lib/components";
+  import { Loader, Chat } from "$lib/components";
   import { expandTextareaHeight } from "$lib/actions";
 
-  let {data} = $props();
+  let { data } = $props();
   const messages = $state([
     {
-      role: 'user',
-      parts: [{text: 'Привет!'}]
+      role: "user",
+      parts: [{ text: "Привет!" }],
     },
     {
-      role: 'model',
-      parts: [{text: 'Привет!'}]
-    }
+      role: "model",
+      parts: [{ text: "Привет!" }],
+    },
   ]);
 
-  let value = $state('');
+  let value = $state("");
   let isSubmitted = $state(false);
 
   function onCtrlEnter(event) {
@@ -24,6 +24,14 @@
     }
   }
 
+  let items = $derived(
+    messages.map((msg) => ({
+      text: msg.parts.map(({text}) => text).join(""),
+      me: msg.role === "user",
+      user: { name: msg.role, link: "/" },
+      timestamp: Date.now(),
+    })),
+  );
 </script>
 
 <!-- <div class="console">
@@ -70,12 +78,9 @@
   }, null, 2)}
 </div> -->
 <main>
-  <header>Header</header>
-  <div class="messages">
-    {#each messages as {role, parts}}
-      <div class={role}>{parts.map(({text}) => text).join('')}</div>
-    {/each}
-  </div>
+  <header>Gemini model</header>
+  <pre>{JSON.stringify(data, null, 2)}</pre>
+  <Chat {items}></Chat>
 
   <form method="POST">
     <label class="text-area">
@@ -99,7 +104,6 @@
   </form>
 </main>
 
-
 <style>
   .console {
     position: absolute;
@@ -111,8 +115,8 @@
     padding: 1em;
     height: 90vh;
     overflow: auto;
-    font-size: .8em;
-    box-shadow: 0 0 50px rgba(0, 0, 0, .5);
+    font-size: 0.8em;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
     background-color: #fff;
     white-space: pre-wrap;
     font-family: monospace;
@@ -120,14 +124,14 @@
   main {
     max-width: 500px;
     margin: 0 auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
     height: 100vh;
     display: flex;
     flex-direction: column;
   }
 
   header {
-    padding: .5em 1em;
+    padding: 0.5em 1em;
     border-bottom: 1px solid #ccc;
   }
 
@@ -142,13 +146,14 @@
     gap: 1rem;
   }
 
-  .user, .model {
-    font-size: .9rem;
+  .user,
+  .model {
+    font-size: 0.9rem;
     line-height: 1.6em;
-    padding: .4em .7em;
+    padding: 0.4em 0.7em;
     border-radius: 0.5em;
   }
-  
+
   .user {
     align-self: self-end;
     margin-left: 20%;
@@ -197,7 +202,7 @@
     border: 1px solid #ccc;
     border-width: 1px 0;
     padding: 14px 45px 14px 14px;
-    transition: .3s;
+    transition: 0.3s;
 
     &::-webkit-scrollbar {
       width: 2px;
@@ -243,5 +248,4 @@
     width: 20px;
     height: 20px;
   }
-
 </style>
